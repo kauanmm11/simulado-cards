@@ -1,0 +1,85 @@
+% Banco de dados
+with app.app_context():
+    database.drop_all()
+    database.create_all()
+    senha_hash = generate_password_hash('kauan123')
+    usuario = Usuario(nome_usuario='kauan medeiros',email='kauanmm11.web@gmail.com',senha=senha_hash,tipo='admin')
+    database.session.add(usuario)
+    database.session.commit()
+% 
+
+% css
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+
+%
+
+% Flask inicio dentro __init__py
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
+app = Flask(__name__)
+app.config['SECRET_KEY'] = '416e7e3da3790330038b0a7f997ef687'
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///app.db"
+
+database = SQLAlchemy(app)
+
+from kauanmedeirosportfolio.auth import home, logou
+from kauanmedeirosportfolio import routes
+% 
+
+% form.py -> import
+from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileAllowed
+from wtforms import StringField, PasswordField, EmailField, SubmitField ,BooleanField, URLField
+from wtforms.validators import Email, EqualTo, Length, DataRequired
+
+criar categoria
+categoria = SelectField(
+'Categoria',choices=[('Desenvolvimento Web', 'Desenvolvimento Web'),('Dashboard', 'Dashboard'),('Landing Page','Landing Page'),('Site Institucional', 'Site Institucional')],validators=[DataRequired()])
+% 
+
+% admin -> decorators.py
+def admin_required(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+
+        if 'usuario_id' not in session:
+           flash('Usuario não esta logado, faça o login e tente novamente')
+           return redirect(url_for('home'))
+
+        usuario = Usuario.query.filter_by(id=session['usuario_id']
+        ).first()
+
+        if usuario is None:
+            flash('Usuario não esta logado, faça o login e tente novamente')
+            return redirect(url_for('home'))
+
+        if usuario.tipo != 'admin':
+            flash('Usuario não permidido')
+            return redirect(url_for('home'))
+
+        return func(*args, **kwargs)
+    return wrapper
+% 
+
+% models.py banco de dados
+class Usuario(database.Model):
+    id = database.Column(database.Integer(), primary_key=True)
+    nome_usuario = database.Column(database.String(), nullable=False)
+    email = database.Column(database.String(), nullable=False, unique=True)
+    senha = database.Column(database.String(), nullable=False)
+    tipo = database.Column(database.String(), default='cliente')
+
+    entre ligar usuario com outra coisa no exemplo esta no posts
+    usuario = database.relationship(Usuario,backref='posts')
+    id_usuario = database.Column(database.Integer(),database.ForeignKey('usuario.id'))
+
+    crir categoria
+    categoria = database.Column(database.String(100), nullable=False)
+% 
+
+% pasta -> templates e static
+nome do projeto e colocar tudo dentro menos main.py
+routes, css, js e img
+% 

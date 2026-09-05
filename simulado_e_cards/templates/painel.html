@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/painel.css') }}">    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/nav.css') }}">
+    <title>Painel</title>
+</head>
+<body>
+
+{% include 'nav.html' %}
+
+<main>
+    <h1>Painel</h1>
+    <button commandfor="modal" command="show-modal">Criar Card</button>
+    
+    <dialog
+    id="modal"
+    class="modal-form"
+    >
+        <button commandfor="modal" command="close">X</button>
+        <form method="post" action="{{ url_for('painel')}}">
+            {{ form_card.hidden_tag() }}
+    
+            {{ form_card.card_pergunta.label }}
+            {{ form_card.card_pergunta }}
+            <br>
+            {{ form_card.card_resposta.label }}
+            {{ form_card.card_resposta }}
+            <br>
+            {{ form_card.card_categoria.label }}
+            {{ form_card.card_categoria }}
+            <br>
+            {{ form_card.botao_submit_card }}
+        </form>
+    </dialog>
+    {% for card in cards %}
+    <div class="card-container">
+        <p>id_card</p>
+        <p>Categoria: {{ card.card_categoria }}</p>
+        <input type="checkbox" id="virar-card-{{ card.id }}">
+        <label for="virar-card-{{ card.id }}" class="card">
+            <div class="pergunta">
+                <h4>Pergunta</h4>
+                <h2>{{ card.card_pergunta }}</h2>
+                <p class="botao">Clica para revelar</p>
+            </div>
+            <div class="resposta">
+                <p>Resposta</p>
+                <h2>{{ card.card_resposta }}</h2>
+                <p class="botao">Clica para revelar</p>
+            </div>
+        </label>
+        <form method="post" action="{{ url_for('painel')}}">
+            {{ form_card.hidden_tag() }}
+            <input type="hidden" name="card_id" value="{{ card.id }}">
+            <button type="submit" name="botao_submit_excluir">Excluir</button>
+        </form>        
+        <form method="post" action="{{ url_for('painel')}}">
+            {{ form_card.hidden_tag() }}
+            <input type="hidden" name="card_editar_id" value="{{ card.id }}">
+            <button type="submit" name="botao_submit_editar">Editar</>
+        </form>
+    {% else %}
+        <p class="vazio">Nenhum card feito ainda.</p>
+    {% endfor %}
+    </div>
+</main>
+
+</body>
+</html>
