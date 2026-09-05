@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+
+{% block body %}
+
+
+<button commandfor="modal-materia" command="show-modal">+ Nova Matéria</button>
+
+{% for materia in materias %}
+<div>
+    <p>{{ materia.nome_materia }}</p>
+    <hr>
+    <p>{{ materia.descricao_materia }}</p>
+
+    <a href="{{ url_for('materia') }}">ver materia</a>
+
+    <form method="post" action="{{ url_for('materias') }}">
+        {{ form_materia.hidden_tag() }}
+        <input type="hidden" name="materia_id" value="{{ materia.id }}">
+        <button type="submit" name="botao_submit_excluir">Excluir</button>
+    </form>    
+    <form method="post" action="{{ url_for('materias') }}">
+        {{ form_materia.hidden_tag() }}
+        <input type="hidden" name="materia_id" value="{{ materia.id }}">
+        <button type="submit" name="botao_submit_editar">Editar</button>
+    </form>
+</div>
+{% endfor %}
+
+<dialog id="modal-materia" class="model">
+    <form method="post" action="{{ url_for('materias') }}">
+        <fieldset>
+            {{ form_materia.hidden_tag() }}
+            <button type="button" commandfor="modal-materia" command="close">X</button>
+            {% if modal_aberto == 'editar' %}
+                <legend>Editando Matéria</legend>
+                <input type="hidden" name="materia_id" value="{{ materia_edicao.id }}">
+            {% else %}
+            {% endif %}
+
+            {{ form_materia.nome_materia.label }}
+            {{ form_materia.nome_materia }}
+            <br>
+            {{ form_materia.descricao_materia.label }}
+            {{ form_materia.descricao_materia }}
+            <br>
+            {{ form_materia.sobre_materia.label }}
+            {{ form_materia.sobre_materia }}
+        </fieldset>
+        {% if modal_aberto == 'editar' %}
+            <button type="submit" name="botao_salvar_edicao">Salvar Alteração</button>
+        {% else %}
+            {{ form_materia.botao_submit_materia }}
+        {% endif %}
+    </form>
+</dialog>
+
+{% if modal_aberto == 'editar' %}
+    <script>document.getElementById('modal-materia').showModal();</script>
+{% endif %}
+
+{% endblock %}

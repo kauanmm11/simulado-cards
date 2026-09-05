@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+
+{% block body %}
+
+{% for materia in materias %}
+<div>
+    <div>
+        <p>{{ materia.nome_materia }}</p>
+        <hr>
+        <p>{{ materia.descricao_materia }}</p>
+    </div>
+    <div>
+        <span>SOBRE A MATÉRIA</span>
+        <p>materia.sobre_materia</p>
+    </div>
+</div>
+{% endfor %}
+<div>
+    <nav>
+        <a href="">Anotações</a>
+        <a href="">Flashcard</a>
+        <a href="">Questões</a>
+    </nav>
+</div>
+<div>
+    <button>+ Nova </button>
+</div>
+
+
+
+{% endblock %}
