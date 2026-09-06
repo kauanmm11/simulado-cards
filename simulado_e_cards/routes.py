@@ -1,6 +1,6 @@
 from flask import render_template, redirect, url_for, request, session
-from simulado_e_cards.form import FormCard, FormMateria
-from simulado_e_cards.models import Card, Materia, database, app
+from simulado_e_cards.form import FormCard, FormMateria, FormQuestao
+from simulado_e_cards.models import Card, Materia, Questao, database, app
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -64,7 +64,7 @@ def materias():
     materia_edicao = None
 
     if 'botao_submit_materia' in request.form:
-        if form_materia.validate_on_submit:
+        if form_materia.validate_on_submit():
             materia = Materia(
                 nome_materia = form_materia.nome_materia.data,
                 descricao_materia = form_materia.descricao_materia.data,
@@ -109,9 +109,26 @@ def materias():
 
 
 
-@app.route('/materia', methods=['GET', 'POST'])
-def materia():
+@app.route('/materia<int:materia_id>', methods=['GET', 'POST'])
+def materia(materia_id):
     form_materia = FormMateria()
+    form_questao = FormQuestao()
+
+    if 'botao_submit_questao' in request.form:
+        if form_questao.validate_on_submit():
+            questao = Questao(
+                enunciado = form_questao.enunciado.data,
+                alternativa_a = form_questao.alternativa_a.data,
+                alternativa_b = form_questao.alternativa_b.data,
+                alternativa_c = form_questao.alternativa_c.data,
+                alternativa_d = form_questao.alternativa_d.data,
+                resposta_correta = form_questao.resposta_correta.data,
+                materia_id = materia_id
+            )
+            database.session.add(questao)
+            database.session.commit()
+            return redirect(url_for('materia'))
 
     materias = Materia.query.all()
-    return render_template('materia.html', form_materia=form_materia, materias=materias)
+    questoes = Questao.query.filter_by(materia_id=materia_id).all()
+    return render_template('materia.html', form_materia=form_materia, materias=materias, form_questao=form_questao, questoes=questoes )

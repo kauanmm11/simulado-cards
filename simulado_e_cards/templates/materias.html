@@ -4,7 +4,7 @@
 {% block body %}
 
 
-<button commandfor="modal-materia" command="show-modal">+ Nova Matéria</button>
+<button commandfor="modal-materias" command="show-modal">+ Nova Matéria</button>
 
 {% for materia in materias %}
 <div>
@@ -27,11 +27,11 @@
 </div>
 {% endfor %}
 
-<dialog id="modal-materia" class="model">
+<dialog id="modal-materias" class="modal">
     <form method="post" action="{{ url_for('materias') }}">
         <fieldset>
             {{ form_materia.hidden_tag() }}
-            <button type="button" commandfor="modal-materia" command="close">X</button>
+            <button type="button" commandfor="modal-materias" command="close">X</button>
             {% if modal_aberto == 'editar' %}
                 <legend>Editando Matéria</legend>
                 <input type="hidden" name="materia_id" value="{{ materia_edicao.id }}">

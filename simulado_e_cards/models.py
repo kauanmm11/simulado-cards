@@ -16,9 +16,9 @@ class Materia(database.Model):
 class Questao(database.Model):
     id = database.Column(database.Integer(), primary_key=True)
     enunciado = database.Column(database.Text(), nullable=False)
-    alternativa_a = database.Column(database.String(255), nullable=False)
-    alternativa_b = database.Column(database.String(255), nullable=False)
-    alternativa_c = database.Column(database.String(255), nullable=False)
-    alternativa_d = database.Column(database.String(255), nullable=False)
+    alternativa_a = database.Column(database.Text(255), nullable=False)
+    alternativa_b = database.Column(database.Text(255), nullable=False)
+    alternativa_c = database.Column(database.Text(255), nullable=False)
+    alternativa_d = database.Column(database.Text(255), nullable=False)
     resposta_correta = database.Column(database.String(1), nullable=False)
     materia_id = database.Column(database.Integer(), ForeignKey('materia.id'), nullable=False)

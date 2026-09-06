@@ -12,21 +12,92 @@
     </div>
     <div>
         <span>SOBRE A MATÉRIA</span>
-        <p>materia.sobre_materia</p>
+        <p>{{ materia.sobre_materia }}</p>
     </div>
 </div>
 {% endfor %}
-<div>
-    <nav>
-        <a href="">Anotações</a>
-        <a href="">Flashcard</a>
-        <a href="">Questões</a>
-    </nav>
-</div>
-<div>
-    <button>+ Nova </button>
-</div>
+<hr>
+<nav class="tabs">
+    <button class="tab-btn" data-tab="anotacoes">
+        🗒️ Anotações
+    </button>
 
+    <button class="tab-btn" data-tab="flashcards">
+        🗂️ Flashcards
+    </button>
+
+    <button class="tab-btn ativo" data-tab="questoes">
+        📋 Questões
+    </button>
+</nav>
+<div>
+    <button type="button" commandfor="modal-materia" command="show-modal">
+        + Nova Questão
+    </button>
+</div>
+{% for materia in materias %}
+
+    <section id="Anotacoes" class="tab-content">
+        <h2>Anotações da Matéria {{ materia.nome_materia }}</h2>
+        {% for questao in questoes %}
+            <div class="card-conector">
+                <h3>{{ questao.enunciado }}</h3>
+                <p>{{ questao.alternativa_a }}</p>
+                <p>{{ questao.alternativa_b }}</p>
+                <p>{{ questao.alternativa_c }}</p>
+                <p>{{ questao.alternativa_d }}</p>
+            </div>
+        {% endfor %}
+    </section>
+
+    <section id="flashcards" class="tab-content">
+        <h2>Flashcards da Matéria {{ materia.nome_materia }}</h2>
+
+        <div class="card-conector">
+
+        </div>
+    </section>
+
+    <section id="questoes" class="tab-content">
+        <h2>Questoes da Matéria {{ materia.nome_materia }}</h2>
+
+        <div class="card-conector">
+
+        </div>
+    </section>
+
+{% endfor %}
+
+<dialog
+id="modal-materia"
+class="modal"
+>
+    <form method="post" action="{{ url_for('materia') }}">
+        {{ form_questao.hidden_tag() }}
+        <button type="button" commandfor="modal-materia" command="close">
+            X
+        </button>
+        <fieldset>
+            {{ form_questao.enunciado.label }}
+            {{ form_questao.enunciado }}
+            <br>
+            {{ form_questao.resposta_correta.label }}
+            {{ form_questao.resposta_correta }}
+            {{ form_questao.alternativa_a.label }}
+            {{ form_questao.alternativa_a }}
+            <br>
+            {{ form_questao.alternativa_b.label }}
+            {{ form_questao.alternativa_b }}
+            <br>
+            {{ form_questao.alternativa_c.label }}
+            {{ form_questao.alternativa_c }}
+            <br>
+            {{ form_questao.alternativa_d.label }}
+            {{ form_questao.alternativa_d }}
+        </fieldset>
+        {{ form_questao.botao_submit_questao }}
+    </form>
+</dialog>
 
 
 {% endblock %}

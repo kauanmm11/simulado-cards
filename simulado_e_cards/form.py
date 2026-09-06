@@ -20,9 +20,9 @@ class FormMateria(FlaskForm):
 
 class FormQuestao(FlaskForm):
     enunciado = StringField('enunciado', validators=[DataRequired()])
-    alternativa_a = StringField('A', validators=[DataRequired()])
-    alternativa_b = StringField('B', validators=[DataRequired()])
-    alternativa_c = StringField('C', validators=[DataRequired()])
-    alternativa_d = StringField('D', validators=[DataRequired()])
-    resposta = RadioField('Alternativa', choices=[('A', 'Alternativa A'), ('B','Alternativa B'), ('C', 'Alternativa C'), ('D', 'Alternativa D')], validators=[DataRequired()])
+    alternativa_a = StringField('',validators=[DataRequired()])
+    alternativa_b = StringField('',validators=[DataRequired()])
+    alternativa_c = StringField('',validators=[DataRequired()])
+    alternativa_d = StringField('',validators=[DataRequired()])
+    resposta_correta = RadioField('Alternativas (marque a correta)', choices=[('A', 'Alternativa A'), ('B','Alternativa B'), ('C', 'Alternativa C'), ('D', 'Alternativa D')], validators=[DataRequired()])
     botao_submit_questao = SubmitField('Adicionar')
