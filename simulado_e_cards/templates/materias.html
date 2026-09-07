@@ -12,7 +12,7 @@
     <hr>
     <p>{{ materia.descricao_materia }}</p>
 
-    <a href="{{ url_for('materia') }}">ver materia</a>
+    <a href="{{ url_for('materia', materia_id=materia.id) }}">ver materia</a>
 
     <form method="post" action="{{ url_for('materias') }}">
         {{ form_materia.hidden_tag() }}
@@ -56,7 +56,7 @@
 </dialog>
 
 {% if modal_aberto == 'editar' %}
-    <script>document.getElementById('modal-materia').showModal();</script>
+    <script>document.getElementById('modal-materias').showModal();</script>
 {% endif %}
 
 {% endblock %}

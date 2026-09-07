@@ -3,7 +3,6 @@
 
 {% block body %}
 
-{% for materia in materias %}
 <div>
     <div>
         <p>{{ materia.nome_materia }}</p>
@@ -15,7 +14,7 @@
         <p>{{ materia.sobre_materia }}</p>
     </div>
 </div>
-{% endfor %}
+
 <hr>
 <nav class="tabs">
     <button class="tab-btn" data-tab="anotacoes">
@@ -35,44 +34,40 @@
         + Nova Questão
     </button>
 </div>
-{% for materia in materias %}
-
-    <section id="Anotacoes" class="tab-content">
-        <h2>Anotações da Matéria {{ materia.nome_materia }}</h2>
-        {% for questao in questoes %}
-            <div class="card-conector">
-                <h3>{{ questao.enunciado }}</h3>
-                <p>{{ questao.alternativa_a }}</p>
-                <p>{{ questao.alternativa_b }}</p>
-                <p>{{ questao.alternativa_c }}</p>
-                <p>{{ questao.alternativa_d }}</p>
-            </div>
-        {% endfor %}
-    </section>
-
-    <section id="flashcards" class="tab-content">
-        <h2>Flashcards da Matéria {{ materia.nome_materia }}</h2>
-
+<section id="anotacoes" class="tab-content">
+    <h2>Anotações da Matéria {{ materia.nome_materia }}</h2>
+    {% for questao in questoes %}
         <div class="card-conector">
-
+            <h3>{{ questao.enunciado }}</h3>
+            <p>{{ questao.alternativa_a }}</p>
+            <p>{{ questao.alternativa_b }}</p>
+            <p>{{ questao.alternativa_c }}</p>
+            <p>{{ questao.alternativa_d }}</p>
         </div>
-    </section>
+    {% endfor %}
+</section>
 
-    <section id="questoes" class="tab-content">
-        <h2>Questoes da Matéria {{ materia.nome_materia }}</h2>
+<section id="flashcards" class="tab-content">
+    <h2>Flashcards da Matéria {{ materia.nome_materia }}</h2>
 
-        <div class="card-conector">
+    <div class="card-conector">
 
-        </div>
-    </section>
+    </div>
+</section>
 
-{% endfor %}
+<section id="questoes" class="tab-content">
+    <h2>Questoes da Matéria {{ materia.nome_materia }}</h2>
+
+    <div class="card-conector">
+
+    </div>
+</section>
 
 <dialog
 id="modal-materia"
 class="modal"
 >
-    <form method="post" action="{{ url_for('materia') }}">
+    <form method="post" action="{{ url_for('materia', materia_id=materia.id)}}">
         {{ form_questao.hidden_tag() }}
         <button type="button" commandfor="modal-materia" command="close">
             X

@@ -109,8 +109,11 @@ def materias():
 
 
 
-@app.route('/materia<int:materia_id>', methods=['GET', 'POST'])
+@app.route('/materia/<int:materia_id>', methods=['GET', 'POST'])
 def materia(materia_id):
+
+    materia = Materia.query.get_or_404(materia_id)
+    
     form_materia = FormMateria()
     form_questao = FormQuestao()
 
@@ -127,8 +130,8 @@ def materia(materia_id):
             )
             database.session.add(questao)
             database.session.commit()
-            return redirect(url_for('materia'))
+            return redirect(url_for('materia', materia_id=materia_id))
 
-    materias = Materia.query.all()
     questoes = Questao.query.filter_by(materia_id=materia_id).all()
-    return render_template('materia.html', form_materia=form_materia, materias=materias, form_questao=form_questao, questoes=questoes )
+
+    return render_template('materia.html', form_materia=form_materia, materia=materia, form_questao=form_questao, questoes=questoes )
