@@ -6,6 +6,7 @@ class Card(database.Model):
     card_pergunta = database.Column(database.String(), nullable=False)
     card_resposta = database.Column(database.String(), nullable=False)
     card_categoria = database.Column(database.String(), nullable=False)
+    materia_id = database.Column(database.Integer(), ForeignKey('materia.id'), nullable=False)
 
 class Materia(database.Model):
     id = database.Column(database.Integer(), primary_key=True)

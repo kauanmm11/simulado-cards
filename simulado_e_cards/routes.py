@@ -10,32 +10,35 @@ def painel():
     cards = Card.query.all()
     return render_template('painel.html', form_card=form_card, cards=cards)
 
-@app.route('/flashcard', methods=['GET', 'POST'])
-def flashcard():
+@app.route('/flashcard/<int:materia_id>', methods=['GET', 'POST'])
+def flashcard(materia_id):
     form_card = FormCard()
     modal_aberto = None
     card_edicao = None
+
+    materia = Materia.query.get_or_404(materia_id)
 
     if 'botao_submit_card' in request.form:
         if form_card.validate_on_submit():
             card = Card(
                 card_pergunta = form_card.card_pergunta.data,
                 card_resposta = form_card.card_resposta.data,
-                card_categoria = form_card.card_categoria.data
+                card_categoria = form_card.card_categoria.data,
+                materia_id=materia_id
             )
             database.session.add(card)
             database.session.commit()
-            return redirect(url_for('flashcard'))
+            return redirect(url_for('flashcard', materia_id=materia_id))
     if 'botao_submit_excluir' in request.form:
         card_id = request.form.get('card_id')
-        card = Card.query.filter_by(id=card_id).first()
+        card = Card.query.filter_by(id=card_id, materia_id=materia_id).first()
         database.session.delete(card)
         database.session.commit()
-        return redirect(url_for('flashcard'))
+        return redirect(url_for('flashcard', materia_id=materia_id))
             
     if 'botao_submit_editar' in request.form:
         card_id = request.form.get('card_editar_id')
-        card = Card.query.filter_by(id=card_id).first()
+        card = Card.query.filter_by(id=card_id, materia_id=materia_id).first()
         if card:
             card_edicao = card
 
@@ -52,10 +55,11 @@ def flashcard():
             card.card_resposta = form_card.card_resposta.data
             card.card_categoria = form_card.card_categoria.data
             database.session.commit()
-            return redirect(url_for('flashcard'))
+            return redirect(url_for('flashcard', materia_id=materia_id))
 
-    cards = Card.query.all()
-    return render_template('flashcards.html',card_edicao=card_edicao, modal_aberto=modal_aberto, form_card=form_card, cards=cards)
+    cards = Card.query.filter_by(materia_id=materia_id).all()
+
+    return render_template('flashcards.html',card_edicao=card_edicao, modal_aberto=modal_aberto, form_card=form_card, cards=cards, materia=materia)
 
 @app.route('/materias', methods=['GET', 'POST'])
 def materias():
@@ -113,7 +117,7 @@ def materias():
 def materia(materia_id):
 
     materia = Materia.query.get_or_404(materia_id)
-    
+    form_card = FormCard()
     form_materia = FormMateria()
     form_questao = FormQuestao()
 
@@ -132,6 +136,19 @@ def materia(materia_id):
             database.session.commit()
             return redirect(url_for('materia', materia_id=materia_id))
 
-    questoes = Questao.query.filter_by(materia_id=materia_id).all()
+    if 'botao_submit_card' in request.form:
+        if form_card.validate_on_submit():
+            card = Card(
+                card_pergunta = form_card.card_pergunta.data,
+                card_resposta = form_card.card_resposta.data,
+                card_categoria = form_card.card_categoria.data,
+                materia_id=materia_id
+            )
+            database.session.add(card)
+            database.session.commit()
+            return redirect(url_for('materia', materia_id=materia_id))
 
-    return render_template('materia.html', form_materia=form_materia, materia=materia, form_questao=form_questao, questoes=questoes )
+    questoes = Questao.query.filter_by(materia_id=materia_id).all()
+    cards = Card.query.filter_by(materia_id=materia_id).all()
+
+    return render_template('materia.html', form_materia=form_materia, materia=materia, form_questao=form_questao, questoes=questoes, form_card=form_card, cards=cards )

@@ -16,26 +16,82 @@
 </div>
 
 <hr>
-<nav class="tabs">
-    <button class="tab-btn" data-tab="anotacoes">
+<nav>
+    <button data-aba="anotacoes">
         🗒️ Anotações
     </button>
 
-    <button class="tab-btn" data-tab="flashcards">
+    <button data-aba="flashcards">
         🗂️ Flashcards
     </button>
 
-    <button class="tab-btn ativo" data-tab="questoes">
+    <button class="ativo" data-aba="questoes">
         📋 Questões
     </button>
 </nav>
-<div>
+
+<section id="anotacoes" class="conteudo">
+    
     <button type="button" commandfor="modal-materia" command="show-modal">
-        + Nova Questão
-    </button>
-</div>
-<section id="anotacoes" class="tab-content">
+        + Nova Anotações
+    </button>  
+
     <h2>Anotações da Matéria {{ materia.nome_materia }}</h2>
+
+    <div class="card-conector">
+
+    </div>
+</section>
+
+<section id="flashcards" class="conteudo">
+
+    <button type="button" commandfor="modal" command="show-modal">
+        + Novo Flashcards
+    </button>
+
+    <h2>Flashcards da Matéria {{ materia.nome_materia }}</h2>
+
+    {% for card in cards %}
+    <div class="card-container">
+        <p>id_card</p>
+        <p>Categoria: {{ card.card_categoria }}</p>
+        <input type="checkbox" id="virar-card-{{ card.id }}">
+        <label for="virar-card-{{ card.id }}" class="card">
+            <div class="pergunta">
+                <h4>Pergunta</h4>
+                <h2>{{ card.card_pergunta }}</h2>
+                <p class="botao">Clica para revelar</p>
+            </div>
+            <div class="resposta">
+                <p>Resposta</p>
+                <h2>{{ card.card_resposta }}</h2>
+                <p class="botao">Clica para revelar</p>
+            </div>
+        </label>
+        <form method="post" action="{{ url_for('flashcard', materia_id=materia.id)}}">
+            {{ form_card.hidden_tag() }}
+            <input type="hidden" name="card_id" value="{{ card.id }}">
+            <button type="submit" name="botao_submit_excluir">Excluir</button>
+        </form>        
+        <form method="post" action="{{ url_for('flashcard', materia_id=materia.id)}}">
+            {{ form_card.hidden_tag() }}
+            <input type="hidden" name="card_editar_id" value="{{ card.id }}">
+            <button type="submit" name="botao_submit_editar">Editar</button>
+        </form>
+    {% else %}
+        <p class="vazio">Nenhum card feito ainda.</p>
+    {% endfor %}
+    </div>
+</section>
+
+<section id="questoes" class="conteudo ativo">
+
+    <button type="button" commandfor="modal-materia" command="show-modal">
+        + Nova Questôes
+    </button>
+
+    <h2>Questoes da Matéria {{ materia.nome_materia }}</h2>
+
     {% for questao in questoes %}
         <div class="card-conector">
             <h3>{{ questao.enunciado }}</h3>
@@ -47,21 +103,37 @@
     {% endfor %}
 </section>
 
-<section id="flashcards" class="tab-content">
-    <h2>Flashcards da Matéria {{ materia.nome_materia }}</h2>
-
-    <div class="card-conector">
-
-    </div>
-</section>
-
-<section id="questoes" class="tab-content">
-    <h2>Questoes da Matéria {{ materia.nome_materia }}</h2>
-
-    <div class="card-conector">
-
-    </div>
-</section>
+<dialog
+id="modal"
+class="modal-form"
+aria-labelledby="admin-form-title"
+>
+    <form method="post" action="{{ url_for('flashcard', materia_id=materia.id)}}">
+        <fieldset>
+            <button type="button" commandfor="modal" command="close">X</button>
+            {{ form_card.hidden_tag() }}
+            {% if modal_aberto == 'editar' %}
+                <legend>Edição</legend>
+                <input type="hidden" name="card_editar_id" value="{{ card_edicao.id }}">
+            {% else %}
+                <legend id="admin-form-title">Criando card</legend>
+            {% endif %}
+            {{ form_card.card_pergunta.label }}
+            {{ form_card.card_pergunta }}
+            <br>
+            {{ form_card.card_resposta.label }}
+            {{ form_card.card_resposta }}
+            <br>
+            {{ form_card.card_categoria }}
+        </fieldset>
+        <br>
+        {% if modal_aberto == 'editar' %}
+            <button type="submit" name="botao_salvar_edicao">Salvar Alterações</button>
+        {% else %}
+            {{ form_card.botao_submit_card }}
+        {% endif %}
+    </form>
+</dialog>
 
 <dialog
 id="modal-materia"
@@ -94,5 +166,30 @@ class="modal"
     </form>
 </dialog>
 
+<script>
+    const links = document.querySelectorAll('nav button');
+    const conteudos = document.querySelectorAll('.conteudo');
+
+    links.forEach(link => {
+        link.addEventListener('click', () => {
+            links.forEach(item => {
+                item.classList.remove('ativo');
+            });
+
+            conteudos.forEach(item => {
+                item.classList.remove('ativo');
+            });
+
+            link.classList.add('ativo');
+
+            const id = link.dataset.aba;
+            document.getElementById(id).classList.add('ativo');
+        });
+    });
+</script>
+
+{% if modal_aberto == 'editar' %}
+    <script>document.getElementById('modal').showModal();</script>
+{% endif %}
 
 {% endblock %}

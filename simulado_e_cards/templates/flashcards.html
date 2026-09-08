@@ -25,12 +25,12 @@
             <p class="botao">Clica para revelar</p>
         </div>
     </label>
-    <form method="post" action="{{ url_for('flashcard')}}">
+    <form method="post" action="{{ url_for('flashcard', materia_id=materia.id)}}">
         {{ form_card.hidden_tag() }}
         <input type="hidden" name="card_id" value="{{ card.id }}">
         <button type="submit" name="botao_submit_excluir">Excluir</button>
     </form>        
-    <form method="post" action="{{ url_for('flashcard')}}">
+    <form method="post" action="{{ url_for('flashcard', materia_id=materia.id)}}">
         {{ form_card.hidden_tag() }}
         <input type="hidden" name="card_editar_id" value="{{ card.id }}">
         <button type="submit" name="botao_submit_editar">Editar</button>
@@ -44,7 +44,7 @@
     class="modal-form"
     aria-labelledby="admin-form-title"
     >
-    <form method="post" action="{{ url_for('flashcard')}}">
+    <form method="post" action="{{ url_for('flashcard', materia_id=materia.id)}}">
         <fieldset>
             <button type="button" commandfor="modal" command="close">X</button>
             {{ form_card.hidden_tag() }}
