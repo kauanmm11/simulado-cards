@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms.fields import StringField, SubmitField
 from wtforms.validators import DataRequired
-from wtforms.fields import SelectField, RadioField
+from wtforms.fields import SelectField, RadioField, TextAreaField
 
 
 class FormCard(FlaskForm):
@@ -24,3 +24,8 @@ class FormQuestao(FlaskForm):
     alternativa_d = StringField('',validators=[DataRequired()])
     resposta_correta = RadioField('Alternativas (marque a correta)', choices=[('A', 'Alternativa A'), ('B','Alternativa B'), ('C', 'Alternativa C'), ('D', 'Alternativa D')], validators=[DataRequired()])
     botao_submit_questao = SubmitField('Adicionar')
+
+class FormAnotacao(FlaskForm):
+    titulo = StringField('Seu Titulo',validators=[DataRequired()])
+    conteudo = TextAreaField('Anotação',validators=[DataRequired()])
+    botao_submit_anotacao = SubmitField('Salvar Anotação')

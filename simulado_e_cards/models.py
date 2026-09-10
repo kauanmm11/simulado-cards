@@ -13,6 +13,7 @@ class Materia(database.Model):
     nome_materia = database.Column(database.String(), nullable=False)
     descricao_materia = database.Column(database.Text(40), nullable=False)
     sobre_materia = database.Column(database.Text(), nullable=False)
+    anotacoes = database.relationship('Anotacao', backref='materia',cascade='all, delete-orphan')
 
 class Questao(database.Model):
     id = database.Column(database.Integer(), primary_key=True)
@@ -22,4 +23,10 @@ class Questao(database.Model):
     alternativa_c = database.Column(database.Text(255), nullable=False)
     alternativa_d = database.Column(database.Text(255), nullable=False)
     resposta_correta = database.Column(database.String(1), nullable=False)
+    materia_id = database.Column(database.Integer(), ForeignKey('materia.id'), nullable=False)
+
+class Anotacao(database.Model):
+    id = database.Column(database.Integer(), primary_key=True)
+    titulo = database.Column(database.String(100), nullable=False)
+    conteudo = database.Column(database.Text(), nullable=False)
     materia_id = database.Column(database.Integer(), ForeignKey('materia.id'), nullable=False)

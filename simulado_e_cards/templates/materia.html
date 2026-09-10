@@ -32,15 +32,22 @@
 
 <section id="anotacoes" class="conteudo">
     
-    <button type="button" commandfor="modal-materia" command="show-modal">
+    <button type="button" commandfor="modal-anotacao" command="show-modal">
         + Nova Anotações
     </button>  
 
     <h2>Anotações da Matéria {{ materia.nome_materia }}</h2>
-
+    {% for anotacao in anotacoes %}
     <div class="card-conector">
 
+    <h3>{{ anotacao.titulo }}</h3>
+    <p>{{ anotacao.conteudo }}</p>
+
+    {% else %}
+        <p class="vazio">Nenhuma Anotação feita ainda.</p>
     </div>
+    {% endfor %}
+
 </section>
 
 <section id="flashcards" class="conteudo">
@@ -68,20 +75,20 @@
                 <p class="botao">Clica para revelar</p>
             </div>
         </label>
-        <form method="post" action="{{ url_for('flashcard', materia_id=materia.id)}}">
+        <form method="post" action="{{ url_for('materia', materia_id=materia.id)}}">
             {{ form_card.hidden_tag() }}
             <input type="hidden" name="card_id" value="{{ card.id }}">
             <button type="submit" name="botao_submit_excluir">Excluir</button>
         </form>        
-        <form method="post" action="{{ url_for('flashcard', materia_id=materia.id)}}">
+        <form method="post" action="{{ url_for('materia', materia_id=materia.id)}}">
             {{ form_card.hidden_tag() }}
             <input type="hidden" name="card_editar_id" value="{{ card.id }}">
             <button type="submit" name="botao_submit_editar">Editar</button>
         </form>
     {% else %}
         <p class="vazio">Nenhum card feito ainda.</p>
-    {% endfor %}
     </div>
+    {% endfor %}
 </section>
 
 <section id="questoes" class="conteudo ativo">
@@ -104,11 +111,27 @@
 </section>
 
 <dialog
+id="modal-anotacao"
+class="modal-form"
+>
+    <form method="post" action="{{ url_for('materia', materia_id=materia.id)}}">
+        <button type="button" commandfor="modal-anotacao" command="close">X</button>
+        {{ form_anotacao.hidden_tag() }}
+        <fieldset>
+            {{ form_anotacao.titulo.label }}
+            {{ form_anotacao.titulo }}
+            {{ form_anotacao.conteudo.label }}
+            {{ form_anotacao.conteudo }}
+        </fieldset>
+        {{ form_anotacao.botao_submit_anotacao }}
+    </form>
+
+<dialog
 id="modal"
 class="modal-form"
 aria-labelledby="admin-form-title"
 >
-    <form method="post" action="{{ url_for('flashcard', materia_id=materia.id)}}">
+    <form method="post" action="{{ url_for('materia', materia_id=materia.id)}}">
         <fieldset>
             <button type="button" commandfor="modal" command="close">X</button>
             {{ form_card.hidden_tag() }}
@@ -167,25 +190,72 @@ class="modal"
 </dialog>
 
 <script>
-    const links = document.querySelectorAll('nav button');
-    const conteudos = document.querySelectorAll('.conteudo');
+const links = document.querySelectorAll('nav button');
+const conteudos = document.querySelectorAll('.conteudo');
 
-    links.forEach(link => {
-        link.addEventListener('click', () => {
-            links.forEach(item => {
-                item.classList.remove('ativo');
-            });
+function ativarAba(link) {
 
-            conteudos.forEach(item => {
-                item.classList.remove('ativo');
-            });
-
-            link.classList.add('ativo');
-
-            const id = link.dataset.aba;
-            document.getElementById(id).classList.add('ativo');
-        });
+    // Remove ativo de todos os botões
+    links.forEach(item => {
+        item.classList.remove('ativo');
     });
+
+    // Esconde todos os conteúdos
+    conteudos.forEach(item => {
+        item.classList.remove('ativo');
+    });
+
+    // Ativa o botão clicado
+    link.classList.add('ativo');
+
+    // Pega o ID do conteúdo
+    const id = link.dataset.aba;
+
+    // Mostra o conteúdo
+    const conteudo = document.getElementById(id);
+
+    if (conteudo) {
+        conteudo.classList.add('ativo');
+    }
+}
+
+
+// Clique nas abas
+links.forEach(link => {
+
+    link.addEventListener('click', () => {
+
+        ativarAba(link);
+
+        // Coloca o ID da aba na URL
+        window.location.hash = link.dataset.aba;
+
+    });
+
+});
+
+
+// Quando a página abrir
+function carregarAbaPelaURL() {
+
+    const hash = window.location.hash;
+
+    if (!hash) {
+        return;
+    }
+
+    const nomeAba = hash.substring(1);
+
+    const link = document.querySelector(
+        `[data-aba="${nomeAba}"]`
+    );
+
+    if (link) {
+        ativarAba(link);
+    }
+}
+
+carregarAbaPelaURL();
 </script>
 
 {% if modal_aberto == 'editar' %}

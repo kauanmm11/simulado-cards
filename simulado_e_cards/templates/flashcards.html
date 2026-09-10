@@ -25,16 +25,6 @@
             <p class="botao">Clica para revelar</p>
         </div>
     </label>
-    <form method="post" action="{{ url_for('flashcard', materia_id=materia.id)}}">
-        {{ form_card.hidden_tag() }}
-        <input type="hidden" name="card_id" value="{{ card.id }}">
-        <button type="submit" name="botao_submit_excluir">Excluir</button>
-    </form>        
-    <form method="post" action="{{ url_for('flashcard', materia_id=materia.id)}}">
-        {{ form_card.hidden_tag() }}
-        <input type="hidden" name="card_editar_id" value="{{ card.id }}">
-        <button type="submit" name="botao_submit_editar">Editar</button>
-    </form>
 {% else %}
     <p class="vazio">Nenhum card feito ainda.</p>
 {% endfor %}
@@ -48,11 +38,7 @@
         <fieldset>
             <button type="button" commandfor="modal" command="close">X</button>
             {{ form_card.hidden_tag() }}
-            {% if modal_aberto == 'editar' %}
-                <legend>Edição</legend>
-                <input type="hidden" name="card_editar_id" value="{{ card_edicao.id }}">
-            {% else %}
-                <legend id="admin-form-title">Criando card</legend>
+            <legend id="admin-form-title">Criando card</legend>
             {% endif %}
             {{ form_card.card_pergunta.label }}
             {{ form_card.card_pergunta }}
@@ -63,11 +49,7 @@
             {{ form_card.card_categoria }}
         </fieldset>
         <br>
-        {% if modal_aberto == 'editar' %}
-            <button type="submit" name="botao_salvar_edicao">Salvar Alterações</button>
-        {% else %}
-            {{ form_card.botao_submit_card }}
-        {% endif %}
+        {{ form_card.botao_submit_card }}
     </form>
 </dialog>
 

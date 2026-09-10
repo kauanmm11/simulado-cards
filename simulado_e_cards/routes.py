@@ -1,6 +1,6 @@
 from flask import render_template, redirect, url_for, request, session
-from simulado_e_cards.form import FormCard, FormMateria, FormQuestao
-from simulado_e_cards.models import Card, Materia, Questao, database, app
+from simulado_e_cards.form import FormCard, FormMateria, FormQuestao, FormAnotacao
+from simulado_e_cards.models import Anotacao, Card, Materia, Questao, database, app
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -115,11 +115,15 @@ def materias():
 
 @app.route('/materia/<int:materia_id>', methods=['GET', 'POST'])
 def materia(materia_id):
+    
+    form_card = FormCard()
+    form_questao = FormQuestao()
+    form_anotacao = FormAnotacao()
+
+    modal_aberto = None
+    card_edicao = None
 
     materia = Materia.query.get_or_404(materia_id)
-    form_card = FormCard()
-    form_materia = FormMateria()
-    form_questao = FormQuestao()
 
     if 'botao_submit_questao' in request.form:
         if form_questao.validate_on_submit():
@@ -134,7 +138,7 @@ def materia(materia_id):
             )
             database.session.add(questao)
             database.session.commit()
-            return redirect(url_for('materia', materia_id=materia_id))
+            return redirect(url_for('materia', materia_id=materia_id) + '#questoes')
 
     if 'botao_submit_card' in request.form:
         if form_card.validate_on_submit():
@@ -146,9 +150,49 @@ def materia(materia_id):
             )
             database.session.add(card)
             database.session.commit()
-            return redirect(url_for('materia', materia_id=materia_id))
+            return redirect(url_for('materia', materia_id=materia_id) + '#flashcards')
+        
+    if 'botao_submit_excluir' in request.form:
+            card_id = request.form.get('card_id')
+            card = Card.query.filter_by(id=card_id, materia_id=materia_id).first()
+            database.session.delete(card)
+            database.session.commit()
+            return redirect(url_for('materia', materia_id=materia_id) + '#flashcards')
+    
+    if 'botao_submit_editar' in request.form:
+            card_id = request.form.get('card_editar_id')
+            card = Card.query.filter_by(id=card_id, materia_id=materia_id).first()
+            if card:
+                card_edicao = card
+    
+                form_card.card_pergunta.data = card.card_pergunta
+                form_card.card_resposta.data = card.card_resposta
+                form_card.card_categoria.data = card.card_categoria
+    
+                modal_aberto = 'editar'
+    if 'botao_salvar_edicao' in request.form:
+            card_id = request.form.get('card_editar_id')
+            card = Card.query.filter_by(id=card_id).first()
+            if card:
+                card.card_pergunta = form_card.card_pergunta.data
+                card.card_resposta = form_card.card_resposta.data
+                card.card_categoria = form_card.card_categoria.data
+                database.session.commit()
+                return redirect(url_for('materia', materia_id=materia_id) + '#flashcards')
 
+    if 'botao_submit_anotacao' in request.form:
+        if form_anotacao.validate_on_submit():
+            anotacao = Anotacao(
+                titulo = form_anotacao.titulo.data,
+                conteudo = form_anotacao.conteudo.data,
+                materia_id=materia_id
+            )
+            database.session.add(anotacao)
+            database.session.commit()
+            return redirect(url_for('materia', materia_id=materia_id) + '#anotacoes')
+        
+    anotacoes = Anotacao.query.filter_by(materia_id=materia_id).all()
     questoes = Questao.query.filter_by(materia_id=materia_id).all()
     cards = Card.query.filter_by(materia_id=materia_id).all()
 
-    return render_template('materia.html', form_materia=form_materia, materia=materia, form_questao=form_questao, questoes=questoes, form_card=form_card, cards=cards )
+    return render_template('materia.html', materia=materia, form_anotacao=form_anotacao,form_questao=form_questao, questoes=questoes, form_card=form_card, cards=cards, modal_aberto=modal_aberto, card_edicao=card_edicao, anotacoes=anotacoes)
