@@ -1,13 +1,10 @@
 {% extends 'base.html' %}
 
 
-
-
-
 {% block body %}
 
 <h1>Veja todos seus cards e aprenda com a sequencia que você criou</h1>
-<button type="button" commandfor="modal" command="show-modal">Criar Card</button>
+<button type="button" commandfor="modal" command="show-modal">+ Novo Flashcard</button>
 {% for card in cards %}
 <div class="card-container">
     <p>id_card</p>
@@ -25,6 +22,23 @@
             <p class="botao">Clica para revelar</p>
         </div>
     </label>
+    <form method="POST">
+
+        <input type="hidden" name="card_id" value="{{ card.id }}">
+
+        <button type="submit" name="resultado" value="errei">
+            ✕ Errei
+        </button>
+
+        <button type="submit" name="resultado" value="dificil">
+            Difícil
+        </button>
+
+        <button type="submit" name="resultado" value="facil">
+            ✓ Fácil
+        </button>
+
+    </form>    
 {% else %}
     <p class="vazio">Nenhum card feito ainda.</p>
 {% endfor %}
@@ -34,22 +48,24 @@
     class="modal-form"
     aria-labelledby="admin-form-title"
     >
-    <form method="post" action="{{ url_for('flashcard', materia_id=materia.id)}}">
+    <form method="post" action="{{ url_for('flashcard')}}">
         <fieldset>
             <button type="button" commandfor="modal" command="close">X</button>
-            {{ form_card.hidden_tag() }}
+            {{ form_card_conectado.hidden_tag() }}
             <legend id="admin-form-title">Criando card</legend>
-            {% endif %}
-            {{ form_card.card_pergunta.label }}
-            {{ form_card.card_pergunta }}
+            {{ form_card_conectado.materia_id.label }}
+            {{ form_card_conectado.materia_id }}
             <br>
-            {{ form_card.card_resposta.label }}
-            {{ form_card.card_resposta }}
+            {{ form_card_conectado.card_pergunta.label }}
+            {{ form_card_conectado.card_pergunta }}
             <br>
-            {{ form_card.card_categoria }}
+            {{ form_card_conectado.card_resposta.label }}
+            {{ form_card_conectado.card_resposta }}
+            <br>
+            {{ form_card_conectado.card_categoria }}
         </fieldset>
         <br>
-        {{ form_card.botao_submit_card }}
+        {{ form_card_conectado.botao_submit_card }}
     </form>
 </dialog>
 

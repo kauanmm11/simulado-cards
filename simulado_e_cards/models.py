@@ -30,3 +30,8 @@ class Anotacao(database.Model):
     titulo = database.Column(database.String(100), nullable=False)
     conteudo = database.Column(database.Text(), nullable=False)
     materia_id = database.Column(database.Integer(), ForeignKey('materia.id'), nullable=False)
+
+class RespostaCard(database.Model):
+    id = database.Column(database.Integer(), primary_key=True)
+    resultado = database.Column(database.String(), nullable=False)
+    card_id = database.Column(database.Integer(), database.ForeignKey('card.id'), nullable=False)

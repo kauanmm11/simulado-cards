@@ -59,22 +59,11 @@
     <h2>Flashcards da Matéria {{ materia.nome_materia }}</h2>
 
     {% for card in cards %}
-    <div class="card-container">
-        <p>id_card</p>
-        <p>Categoria: {{ card.card_categoria }}</p>
-        <input type="checkbox" id="virar-card-{{ card.id }}">
-        <label for="virar-card-{{ card.id }}" class="card">
-            <div class="pergunta">
-                <h4>Pergunta</h4>
-                <h2>{{ card.card_pergunta }}</h2>
-                <p class="botao">Clica para revelar</p>
-            </div>
-            <div class="resposta">
-                <p>Resposta</p>
-                <h2>{{ card.card_resposta }}</h2>
-                <p class="botao">Clica para revelar</p>
-            </div>
-        </label>
+    <div class="card-base">
+        <div class="card-materia">
+            <p><strong>{{ card.card_pergunta }}</strong></p>
+            <p>{{ card.card_resposta }}</p>
+        </div>
         <form method="post" action="{{ url_for('materia', materia_id=materia.id)}}">
             {{ form_card.hidden_tag() }}
             <input type="hidden" name="card_id" value="{{ card.id }}">
@@ -94,7 +83,7 @@
 <section id="questoes" class="conteudo ativo">
 
     <button type="button" commandfor="modal-materia" command="show-modal">
-        + Nova Questôes
+        + Nova Questões
     </button>
 
     <h2>Questoes da Matéria {{ materia.nome_materia }}</h2>
@@ -125,6 +114,7 @@ class="modal-form"
         </fieldset>
         {{ form_anotacao.botao_submit_anotacao }}
     </form>
+</dialog>
 
 <dialog
 id="modal"
@@ -195,23 +185,18 @@ const conteudos = document.querySelectorAll('.conteudo');
 
 function ativarAba(link) {
 
-    // Remove ativo de todos os botões
     links.forEach(item => {
         item.classList.remove('ativo');
     });
 
-    // Esconde todos os conteúdos
     conteudos.forEach(item => {
         item.classList.remove('ativo');
     });
 
-    // Ativa o botão clicado
     link.classList.add('ativo');
 
-    // Pega o ID do conteúdo
     const id = link.dataset.aba;
 
-    // Mostra o conteúdo
     const conteudo = document.getElementById(id);
 
     if (conteudo) {
@@ -219,8 +204,6 @@ function ativarAba(link) {
     }
 }
 
-
-// Clique nas abas
 links.forEach(link => {
 
     link.addEventListener('click', () => {
@@ -234,8 +217,6 @@ links.forEach(link => {
 
 });
 
-
-// Quando a página abrir
 function carregarAbaPelaURL() {
 
     const hash = window.location.hash;
@@ -254,7 +235,6 @@ function carregarAbaPelaURL() {
         ativarAba(link);
     }
 }
-
 carregarAbaPelaURL();
 </script>
 

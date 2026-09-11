@@ -1,6 +1,6 @@
 from flask import render_template, redirect, url_for, request, session
-from simulado_e_cards.form import FormCard, FormMateria, FormQuestao, FormAnotacao
-from simulado_e_cards.models import Anotacao, Card, Materia, Questao, database, app
+from simulado_e_cards.form import FormCard, FormMateria, FormQuestao, FormAnotacao, FormCardconectado
+from simulado_e_cards.models import RespostaCard ,Anotacao, Card, Materia, Questao, database, app
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -10,56 +10,43 @@ def painel():
     cards = Card.query.all()
     return render_template('painel.html', form_card=form_card, cards=cards)
 
-@app.route('/flashcard/<int:materia_id>', methods=['GET', 'POST'])
-def flashcard(materia_id):
-    form_card = FormCard()
-    modal_aberto = None
-    card_edicao = None
+@app.route('/flashcard', methods=['GET', 'POST'])
+def flashcard():
+    form_card_conectado = FormCardconectado()
 
-    materia = Materia.query.get_or_404(materia_id)
+    materias = Materia.query.all()
 
-    if 'botao_submit_card' in request.form:
-        if form_card.validate_on_submit():
-            card = Card(
-                card_pergunta = form_card.card_pergunta.data,
-                card_resposta = form_card.card_resposta.data,
-                card_categoria = form_card.card_categoria.data,
-                materia_id=materia_id
-            )
-            database.session.add(card)
-            database.session.commit()
-            return redirect(url_for('flashcard', materia_id=materia_id))
-    if 'botao_submit_excluir' in request.form:
-        card_id = request.form.get('card_id')
-        card = Card.query.filter_by(id=card_id, materia_id=materia_id).first()
-        database.session.delete(card)
+    form_card_conectado.materia_id.choices = [
+        (materia.id, materia.nome_materia)
+        for materia in materias
+    ]
+
+    if form_card_conectado.validate_on_submit():
+        card = Card(
+            card_pergunta = form_card_conectado.card_pergunta.data,
+            card_resposta = form_card_conectado.card_resposta.data,
+            card_categoria = form_card_conectado.card_categoria.data,
+            materia_id = form_card_conectado.materia_id.data
+        )
+        database.session.add(card)
         database.session.commit()
-        return redirect(url_for('flashcard', materia_id=materia_id))
-            
-    if 'botao_submit_editar' in request.form:
-        card_id = request.form.get('card_editar_id')
-        card = Card.query.filter_by(id=card_id, materia_id=materia_id).first()
-        if card:
-            card_edicao = card
+        return redirect(url_for('flashcard'))
 
-            form_card.card_pergunta.data = card.card_pergunta
-            form_card.card_resposta.data = card.card_resposta
-            form_card.card_categoria.data = card.card_categoria
+    if 'resultado' in request.form:
+         card_id = request.form.get('card_id')
+         resultado = request.form.get('resultado')
 
-            modal_aberto = 'editar'
-    if 'botao_salvar_edicao' in request.form:
-        card_id = request.form.get('card_editar_id')
-        card = Card.query.filter_by(id=card_id).first()
-        if card:
-            card.card_pergunta = form_card.card_pergunta.data
-            card.card_resposta = form_card.card_resposta.data
-            card.card_categoria = form_card.card_categoria.data
-            database.session.commit()
-            return redirect(url_for('flashcard', materia_id=materia_id))
+         resposta = RespostaCard(
+              resultado=resultado,
+              card_id=card_id
+         )
 
-    cards = Card.query.filter_by(materia_id=materia_id).all()
+         database.session.add(resposta)
+         database.session.commit()
 
-    return render_template('flashcards.html',card_edicao=card_edicao, modal_aberto=modal_aberto, form_card=form_card, cards=cards, materia=materia)
+    cards = Card.query.all()
+
+    return render_template('flashcards.html', form_card_conectado=form_card_conectado, cards=cards, materias=materias)
 
 @app.route('/materias', methods=['GET', 'POST'])
 def materias():

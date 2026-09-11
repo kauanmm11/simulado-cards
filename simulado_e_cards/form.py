@@ -9,6 +9,13 @@ class FormCard(FlaskForm):
     card_resposta = StringField('Crie a Resposta: ', validators=[DataRequired()])
     card_categoria = SelectField('categoria', choices=[('Python', 'Python'), ('JavaScript', 'JavaScript'), ('Logica', 'Logica')], validators=[DataRequired()])
     botao_submit_card = SubmitField('Criar Card')
+    
+class FormCardconectado(FlaskForm):
+    materia_id = SelectField('Materia', coerce=int, validators=[DataRequired()])
+    card_pergunta = StringField('Frente ', validators=[DataRequired()])
+    card_resposta = StringField('Verso ', validators=[DataRequired()])
+    card_categoria = SelectField('categoria', choices=[('Python', 'Python'), ('JavaScript', 'JavaScript'), ('Logica', 'Logica')], validators=[DataRequired()])
+    botao_submit_card = SubmitField('Criar Card')
 
 class FormMateria(FlaskForm):
     nome_materia = StringField('Nome da Matéria', validators=[DataRequired()])
