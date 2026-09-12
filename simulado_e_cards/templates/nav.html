@@ -11,7 +11,9 @@
         {% elif request.endpoint == 'materias' %}
             Materias
         {% elif request.endpoint == 'flashcard' %}
-            Flashcards
+            Flashcards        
+        {% elif request.endpoint == 'anotacao' %}
+            Anotações
         {% endif %}
     </h4>
 </aside>
@@ -24,24 +26,24 @@
 
     <nav class="menu">
 
-        <a href="/">
+        <a href="{{ url_for('painel') }}" class="{% if request.endpoint == 'painel' %}ativo{% endif %}">
             <span class="icon">▦</span>
             <span class="nome">Dashboard</span>
         </a>
 
-        <a href="{{ url_for('materias') }}">
+        <a href="{{ url_for('materias') }}" class="{% if request.endpoint == 'materias' %}ativo{% endif %}">
             <span class="icon">▣</span>
             <span class="nome">Materias</span>
         </a>
 
-        <a href="{{ url_for('flashcard') }}">
+        <a href="{{ url_for('flashcard') }}" class="{% if request.endpoint == 'flashcard' %}ativo{% endif %}">
             <span class="icon">□</span>
-            <span class="nome">Documentos</span>
+            <span class="nome">Flashcards</span>
         </a>
 
-        <a href="/camadas">
+        <a href="{{ url_for('anotacao') }}" class="{% if request.endpoint == 'anotacao' %}ativo{% endif %}">
             <span class="icon">▱</span>
-            <span class="nome">Categorias</span>
+            <span class="nome">Anotações</span>
         </a>
 
         <a href="/tarefas">

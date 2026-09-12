@@ -7,11 +7,15 @@
 <button commandfor="modal-materias" command="show-modal">+ Nova Matéria</button>
 
 {% for materia in materias %}
-<div>
-    <p>{{ materia.nome_materia }}</p>
-    <hr>
-    <p>{{ materia.descricao_materia }}</p>
-
+<div class="card-materia" style="--cor-materia: {{ materia.cor }};">
+    <div>
+        <div class="icone-materia">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open h-4 w-4" aria-hidden="true"><path d="M12 7v14"></path><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"></path></svg>
+        </div>
+        <p>{{ materia.nome_materia }}</p>
+        <hr>
+        <p>{{ materia.descricao_materia }}</p>
+    </div>
     <a href="{{ url_for('materia', materia_id=materia.id) }}">ver materia</a>
 
     <form method="post" action="{{ url_for('materias') }}">
@@ -46,6 +50,26 @@
             <br>
             {{ form_materia.sobre_materia.label }}
             {{ form_materia.sobre_materia }}
+            <br>
+            <div class="campo-cor">
+                <label>Cor</label>
+                <div class="cores">
+                    {% for value, label in form_materia.cor.choices %}
+                        <label class="cor-opcao">
+                            <input
+                                type="radio"
+                                name="cor"
+                                value="{{ value }}"
+                                {% if form_materia.cor.data == value %}checked{% endif %}
+                            >
+                            <span
+                                class="cor-bolinha"
+                                style="background-color: {{ value }};"
+                            ></span>
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
         </fieldset>
         {% if modal_aberto == 'editar' %}
             <button type="submit" name="botao_salvar_edicao">Salvar Alteração</button>

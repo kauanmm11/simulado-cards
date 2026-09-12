@@ -1,0 +1,58 @@
+
+
+.card-materia {
+    border-top: 4px solid var(--cor-materia);
+}
+
+.icone-materia {
+    background-color: var(--cor-materia);
+}
+
+
+
+.campo-cor {
+    margin-top: 20px;
+}
+
+.campo-cor > label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.cores {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.cor-opcao {
+    position: relative;
+    cursor: pointer;
+}
+
+.cor-opcao input {
+    position: absolute;
+    opacity: 0;
+}
+
+.cor-bolinha {
+    width: 32px;
+    height: 32px;
+
+    display: block;
+
+    border-radius: 50%;
+
+    border: 2px solid transparent;
+
+    transition: .2s;
+}
+
+.cor-opcao:hover .cor-bolinha {
+    transform: scale(1.1);
+}
+
+.cor-opcao input:checked + .cor-bolinha {
+    border-color: #18354a;
+    box-shadow: 0 0 0 2px white;
+}

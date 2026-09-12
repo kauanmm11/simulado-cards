@@ -83,7 +83,7 @@
     display: flex;
     align-items: center;
     text-decoration: none;
-    color: #18354a;
+    color: #011427;
     border-radius: 9px;
     overflow: hidden;
     transition: background .2s;
@@ -91,6 +91,11 @@
 
 .menu a:hover {
     background: #d8eaf5;
+}
+
+.menu a.ativo {
+    background-color: #109bff42;
+    font-weight: bold;
 }
 
 .icon {

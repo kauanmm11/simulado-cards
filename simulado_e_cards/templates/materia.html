@@ -5,9 +5,15 @@
 
 <div>
     <div>
-        <p>{{ materia.nome_materia }}</p>
-        <hr>
-        <p>{{ materia.descricao_materia }}</p>
+        <a href="{{ url_for('materias') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left h-4 w-4" aria-hidden="true"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>
+        </a>
+        <div>
+            <div class="icon">{{ materia.nome_materia[0] }}</div>
+            <p>{{ materia.nome_materia }}</p>
+            <hr>
+            <p>{{ materia.descricao_materia }}</p>
+        </div>
     </div>
     <div>
         <span>SOBRE A MATÉRIA</span>
@@ -33,19 +39,31 @@
 <section id="anotacoes" class="conteudo">
     
     <button type="button" commandfor="modal-anotacao" command="show-modal">
-        + Nova Anotações
+        + Nova Anotação
     </button>  
 
     <h2>Anotações da Matéria {{ materia.nome_materia }}</h2>
     {% for anotacao in anotacoes %}
-    <div class="card-conector">
+        <div class="card-conector">
 
-    <h3>{{ anotacao.titulo }}</h3>
-    <p>{{ anotacao.conteudo }}</p>
-
+            <h3>{{ anotacao.titulo }}</h3>
+            <p>{{ anotacao.conteudo }}</p>
+            {% for tag in anotacao.tags.split(',') %}
+            <p>{{ tag.strip() }}</p>
+            {% endfor %}
+            <form method="post" action="{{ url_for('materia', materia_id=materia.id)}}">
+                {{ form_anotacao.hidden_tag() }}
+                <input type="hidden" name="anotacao_id" value="{{ anotacao.id }}">
+                <button type="submit" name="botao_submit_excluir_anotacao">Excluir</button>
+            </form>        
+            <form method="post" action="{{ url_for('materia', materia_id=materia.id)}}#anotacoes">
+                {{ form_anotacao.hidden_tag() }}
+                <input type="hidden" name="anotacao_editar_id" value="{{ anotacao.id }}">
+                <button type="submit" name="botao_submit_editar_anotacao">Editar</button>
+            </form>
+        </div>
     {% else %}
         <p class="vazio">Nenhuma Anotação feita ainda.</p>
-    </div>
     {% endfor %}
 
 </section>
@@ -53,7 +71,7 @@
 <section id="flashcards" class="conteudo">
 
     <button type="button" commandfor="modal" command="show-modal">
-        + Novo Flashcards
+        + Novo Flashcard
     </button>
 
     <h2>Flashcards da Matéria {{ materia.nome_materia }}</h2>
@@ -74,16 +92,16 @@
             <input type="hidden" name="card_editar_id" value="{{ card.id }}">
             <button type="submit" name="botao_submit_editar">Editar</button>
         </form>
+    </div>
     {% else %}
         <p class="vazio">Nenhum card feito ainda.</p>
-    </div>
     {% endfor %}
 </section>
 
 <section id="questoes" class="conteudo ativo">
 
     <button type="button" commandfor="modal-materia" command="show-modal">
-        + Nova Questões
+        + Nova Questão
     </button>
 
     <h2>Questoes da Matéria {{ materia.nome_materia }}</h2>
@@ -96,6 +114,8 @@
             <p>{{ questao.alternativa_c }}</p>
             <p>{{ questao.alternativa_d }}</p>
         </div>
+    {% else %}
+        <p class="vazio">Nenhuma Questão feita ainda.</p>
     {% endfor %}
 </section>
 
@@ -107,12 +127,27 @@ class="modal-form"
         <button type="button" commandfor="modal-anotacao" command="close">X</button>
         {{ form_anotacao.hidden_tag() }}
         <fieldset>
+            {% if modal_aberto == 'editar_anotacao' %}
+                <legend>Edição</legend>
+                <input type="hidden" name="anotacao_editar_id" value="{{ anotacao_edicao.id }}">
+            {% else %}
+                <legend id="admin-form-title">Criando Anotação</legend>
+            {% endif %}
+
             {{ form_anotacao.titulo.label }}
             {{ form_anotacao.titulo }}
+            <br>
             {{ form_anotacao.conteudo.label }}
             {{ form_anotacao.conteudo }}
+            <br>
+            {{ form_anotacao.tags.label }}
+            {{ form_anotacao.tags }}
         </fieldset>
-        {{ form_anotacao.botao_submit_anotacao }}
+        {% if modal_aberto == 'editar_anotacao' %}
+            <button type="submit" name="botao_salvar_edicao_anotacao">Salvar Alterações</button>
+        {% else %}
+            {{ form_anotacao.botao_submit_anotacao }}
+        {% endif %}
     </form>
 </dialog>
 
@@ -122,9 +157,9 @@ class="modal-form"
 aria-labelledby="admin-form-title"
 >
     <form method="post" action="{{ url_for('materia', materia_id=materia.id)}}">
+        <button type="button" commandfor="modal" command="close">X</button>
+        {{ form_card.hidden_tag() }}
         <fieldset>
-            <button type="button" commandfor="modal" command="close">X</button>
-            {{ form_card.hidden_tag() }}
             {% if modal_aberto == 'editar' %}
                 <legend>Edição</legend>
                 <input type="hidden" name="card_editar_id" value="{{ card_edicao.id }}">
@@ -179,67 +214,12 @@ class="modal"
     </form>
 </dialog>
 
-<script>
-const links = document.querySelectorAll('nav button');
-const conteudos = document.querySelectorAll('.conteudo');
-
-function ativarAba(link) {
-
-    links.forEach(item => {
-        item.classList.remove('ativo');
-    });
-
-    conteudos.forEach(item => {
-        item.classList.remove('ativo');
-    });
-
-    link.classList.add('ativo');
-
-    const id = link.dataset.aba;
-
-    const conteudo = document.getElementById(id);
-
-    if (conteudo) {
-        conteudo.classList.add('ativo');
-    }
-}
-
-links.forEach(link => {
-
-    link.addEventListener('click', () => {
-
-        ativarAba(link);
-
-        // Coloca o ID da aba na URL
-        window.location.hash = link.dataset.aba;
-
-    });
-
-});
-
-function carregarAbaPelaURL() {
-
-    const hash = window.location.hash;
-
-    if (!hash) {
-        return;
-    }
-
-    const nomeAba = hash.substring(1);
-
-    const link = document.querySelector(
-        `[data-aba="${nomeAba}"]`
-    );
-
-    if (link) {
-        ativarAba(link);
-    }
-}
-carregarAbaPelaURL();
-</script>
-
 {% if modal_aberto == 'editar' %}
     <script>document.getElementById('modal').showModal();</script>
+{% endif %}
+
+{% if modal_aberto == 'editar_anotacao' %}
+    <script>document.getElementById('modal-anotacao').showModal();</script>
 {% endif %}
 
 {% endblock %}

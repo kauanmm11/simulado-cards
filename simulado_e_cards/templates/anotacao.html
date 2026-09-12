@@ -1,0 +1,81 @@
+{% extends 'base.html' %} {% block body %}
+
+<div class="barra-filtros">
+  <div class="campo-busca">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      class="lucide lucide-search pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+      aria-hidden="true"
+    >
+      <path d="m21 21-4.34-4.34"></path>
+      <circle cx="11" cy="11" r="8"></circle>
+    </svg>
+
+    <input type="text" id="buscar-materia" placeholder="Pesquisar matéria..." />
+  </div>
+
+  <select id="filtro-materia">
+    <option value="">Todas as matérias</option>
+    {% for materia in materias %}
+        <option value="{{ materia.nome_materia }}">
+            {{ materia.nome_materia }}
+        </option>
+    {% endfor %}
+  </select>
+
+  <button type="button" commandfor="modal-anotacao" command="show-modal">
+    + Nova Anotação
+  </button>
+</div>
+
+{% for anotacao in anotacoes %}
+<div
+  class="card-conector"
+  data-materia="{{ anotacao.materia.nome_materia }}"
+  data-titulo="{{ anotacao.titulo }}"
+  data-conteudo="{{ anotacao.conteudo }}"
+  data-tags="{{ anotacao.tags }}"
+>
+  <a href="{{ url_for('materia', materia_id=anotacao.materia.id) }}#anotacoes"
+    >{{ anotacao.materia.nome_materia }}</a
+  >
+  <h3>{{ anotacao.titulo }}</h3>
+  <p>{{ anotacao.conteudo }}</p>
+  {% for tag in anotacao.tags.split(',') %}
+  <p>{{ tag.strip() }}</p>
+  {% endfor %}
+</div>
+{% else %}
+<p class="vazio">Nenhuma Anotação feita ainda.</p>
+{% endfor %}
+
+<dialog id="modal-anotacao" class="modal-form">
+  <form method="post" action="{{ url_for('anotacao')}}">
+    <button type="button" commandfor="modal-anotacao" command="close">X</button>
+    {{ form_anotacao_conectado.hidden_tag() }}
+    <fieldset>
+      {{ form_anotacao_conectado.materia_id.label }} {{
+      form_anotacao_conectado.materia_id }}
+      <br />
+      {{ form_anotacao_conectado.titulo.label }} {{
+      form_anotacao_conectado.titulo }}
+      <br />
+      {{ form_anotacao_conectado.conteudo.label }} {{
+      form_anotacao_conectado.conteudo }}
+      <br />
+      {{ form_anotacao_conectado.tags.label }} {{ form_anotacao_conectado.tags
+      }}
+    </fieldset>
+    {{ form_anotacao_conectado.botao_submit_anotacao }}
+  </form>
+</dialog>
+
+{% endblock %}
