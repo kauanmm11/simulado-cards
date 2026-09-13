@@ -13,7 +13,9 @@
         {% elif request.endpoint == 'flashcard' %}
             Flashcards        
         {% elif request.endpoint == 'anotacao' %}
-            Anotações
+            Anotações        
+        {% elif request.endpoint == 'simulado' %}
+            Simulado
         {% endif %}
     </h4>
 </aside>
@@ -46,7 +48,7 @@
             <span class="nome">Anotações</span>
         </a>
 
-        <a href="/tarefas">
+        <a href="{{ url_for('simulado') }}" class="{% if request.endpoint == 'simulado' %}ativo{% endif %}">
             <span class="icon">▤</span>
             <span class="nome">Tarefas</span>
         </a>

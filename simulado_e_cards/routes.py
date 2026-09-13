@@ -6,6 +6,7 @@ from simulado_e_cards.form import (
     FormAnotacao,
     FormCardconectado,
     FormAnotacaoconectado,
+    FormSimulado,
 )
 from simulado_e_cards.models import (
     RespostaCard,
@@ -296,3 +297,19 @@ def anotacao():
         form_anotacao_conectado=form_anotacao_conectado,
         anotacoes=anotacoes,
     )
+
+@app.route("/simulado", methods=["GET", "POST"])
+def simulado():
+
+    form_simulado = FormSimulado()
+
+    materias = Materia.query.all()
+
+    total_questoes = Questao.query.count()
+    
+    form_simulado.materia_simulado.choices = [
+        (materia.id, materia.nome_materia) for materia in materias
+    ]
+
+
+    return render_template("simulado.html", materias=materias, form_simulado=form_simulado, total_questoes=total_questoes)

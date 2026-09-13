@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms.fields import StringField, SubmitField
-from wtforms.validators import DataRequired
+from wtforms.fields import StringField, SubmitField, IntegerField
+from wtforms.validators import DataRequired, NumberRange
 from wtforms.fields import SelectField, RadioField, TextAreaField
 
 
@@ -88,3 +88,11 @@ class FormAnotacaoconectado(FlaskForm):
     conteudo = TextAreaField("Conteúdo", validators=[DataRequired()])
     tags = StringField("Tags")
     botao_submit_anotacao = SubmitField("Salvar Anotação")
+
+
+class FormSimulado(FlaskForm):
+    nome_simulado = StringField("Nome (Opcinal)")
+    materia_simulado = RadioField("Matéria (Vazio = Todas)", coerce=int)
+    questoes_simulado = IntegerField("Quantidade de Questões", validators=[NumberRange(min=1, max=115)], default=10)
+    duracao_simulado = IntegerField("Duração (min)", validators=[NumberRange(min=1, max=180)], default=20)
+    botao_submit_simulado = SubmitField("Iniciar Simulado")

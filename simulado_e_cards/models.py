@@ -19,6 +19,7 @@ class Materia(database.Model):
     sobre_materia = database.Column(database.Text(), nullable=False)
     cor = database.Column(database.String(7), nullable=False, default="#2E8B9F")
     anotacoes = database.relationship("Anotacao", backref="materia", lazy=True)
+    questoes = database.relationship("Questao", backref="materia", lazy=True)
 
 
 class Questao(database.Model):
@@ -50,3 +51,10 @@ class RespostaCard(database.Model):
     card_id = database.Column(
         database.Integer(), database.ForeignKey("card.id"), nullable=False
     )
+
+# class Simulado(database.Model):
+#     id = database.Column(database.Integer(), primary_key=True)
+#     nome_simulado = database.Column(database.String())
+#     questoes_certas = database.Column(database.String(), nullable=False)
+#     questoes_erradas = database.Column(database.String(), nullable=False)
+#     duracao_simulado = database.Column(database.Integer(), nullable=False)

@@ -1,0 +1,75 @@
+{% extends 'base.html' %} {% block body %}
+
+
+<form method="POST">
+  {{ form_simulado.hidden_tag() }}
+
+  <h2>Novo simulado</h2>
+
+  <p>
+    Configure as opções e inicie. {{ total_questoes }} questões disponíveis.
+  </p>
+
+  {{ form_simulado.nome_simulado.label }} {{ form_simulado.nome_simulado(
+  placeholder="Ex.: Revisão semanal" ) }}
+
+  <h3>Matérias (vazio = todas)</h3>
+
+  <div class="materias-simulado">
+    {% for materia in materias %}
+
+    <label class="materia-opcao">
+      <input type="radio" name="materia_simulado" value="{{ materia.id }}" />
+
+      <span
+        class="cor-materia"
+        style="background-color: {{ materia.cor }};"
+      ></span>
+
+      <span> {{ materia.nome_materia }} </span>
+
+      <span> {{ materia.questoes|length }} </span>
+    </label>
+
+    {% endfor %}
+  </div>
+
+  <div class="config-simulado">
+    <div>
+      <label>
+        Quantidade de questões
+        <strong id="valorQuestoes">0</strong>
+      </label>
+
+      <input
+        type="range"
+        name="questoes_simulado"
+        min="5"
+        max="{{ total_questoes }}"
+        value="1"
+        oninput="document.getElementById('valorQuestoes').textContent = this.value"
+      />
+    </div>
+
+    <div>
+      <label>
+        Duração (min)
+        <strong id="valorDuracao">20</strong>
+      </label>
+
+      <input
+        type="range"
+        name="duracao_simulado"
+        min="10"
+        max="180"
+        step="5"
+        value="20"
+        oninput="document.getElementById('valorDuracao').textContent = this.value"
+      />
+    </div>
+  </div>
+
+  {{ form_simulado.botao_submit_simulado }}
+</form>
+
+{% endblock %}
